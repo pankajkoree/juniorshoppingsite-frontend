@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ClientWrapper from "./ClientWrapper";
+import ClientWrapper from "@/context/ClientWrapper";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
