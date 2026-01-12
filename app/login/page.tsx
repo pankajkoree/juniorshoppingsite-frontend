@@ -11,6 +11,10 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const handleLogin = () => {
+    
+  }
   return (
     <div className="relative flex justify-center items-center min-h-screen">
       <div className="relative flex flex-col justify-center items-center xl:w-[22%] border shadow-sm shadow-gray-300 hover:shadow-blue-300 rounded-sm p-4">
@@ -60,7 +64,7 @@ const Login = () => {
           {/* <------- login button and signup indicator -------> */}
           <div className="flex flex-col justify-center items-center">
             {/* <------- login button -------> */}
-            <Button variant="login" size="lg">
+            <Button variant="login" size="lg" onClick={handleLogin}>
               Login
             </Button>
 
