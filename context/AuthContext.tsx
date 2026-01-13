@@ -12,7 +12,9 @@ interface User {
 // <------- interface for auth context type ------->
 interface AuthContextType {
   user: User | null;
-
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
   refetchUser: () => void;
 }
 
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 
   // <------- current user ------->
-  const { data: user } = useQuery<User | null>({
+  const { data: user, isLoading } = useQuery<User | null>({
     queryKey: ["currentUser"],
     queryFn: async () => {
       try {
@@ -58,6 +60,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error(error.response?.data?.message || "login failed");
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
   });
 
   // <------- login ------->
@@ -69,7 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         user: user ?? null,
-
+        isAuthenticated: !!user,
+        isLoading,
+        login,
         refetchUser,
       }}
     >

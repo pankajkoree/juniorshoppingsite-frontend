@@ -3,18 +3,35 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const router = useRouter();
+  const { login, isAuthenticated, user, isLoading } = useAuth();
   const [loginCredentials, setLoginCredentials] = useState({
     email: "",
     password: "",
   });
 
-  const handleLogin = () => {
-    
-  }
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await login(loginCredentials.email, loginCredentials.password);
+    } catch (error) {
+      toast.error("invalid credentials");
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      toast.success("login successful");
+      router.push("/");
+    }
+  }, [isAuthenticated, user]);
   return (
     <div className="relative flex justify-center items-center min-h-screen">
       <div className="relative flex flex-col justify-center items-center xl:w-[22%] border shadow-sm shadow-gray-300 hover:shadow-blue-300 rounded-sm p-4">
@@ -25,7 +42,7 @@ const Login = () => {
         </div>
 
         {/* <------- login form -------> */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleLogin}>
           {/* <------- email -------> */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
@@ -64,7 +81,7 @@ const Login = () => {
           {/* <------- login button and signup indicator -------> */}
           <div className="flex flex-col justify-center items-center">
             {/* <------- login button -------> */}
-            <Button variant="login" size="lg" onClick={handleLogin}>
+            <Button variant="login" size="lg">
               Login
             </Button>
 
