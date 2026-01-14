@@ -1,3 +1,5 @@
+"use client";
+
 import { api } from "@/lib/api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
@@ -26,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
   // <------- login mutation ------->
-  const { mutateAsync: loginMutate, isLoading: isLoginLoading } = useMutation<
+  const { mutateAsync: loginMutate, isPending: isLoginLoading } = useMutation<
     { user: User },
     Error,
     { email: string; password: string }
@@ -39,28 +41,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return res.data;
     },
     onSuccess: (data) => {
+      // ✅ store user in cache
       queryClient.setQueryData(["currentUser"], data.user);
     },
   });
+
   // <------- login function ------->
+
   const login = async (email: string, password: string) => {
     await loginMutate({ email, password });
   };
 
   // <------- logout mutation ------->
-  const { mutateAsync: logoutMutate, isLoading: isLogoutLoading } = useMutation<
+  const { mutateAsync: logoutMutate, isPending: isLogoutLoading } = useMutation<
     void,
-    Error,
-    void
+    Error
   >({
     mutationKey: ["logout"],
     mutationFn: async () => {
-      await api.post("/api/user/logout", { withCredentials: true });
+      await api.post("/api/user/logout", {}, { withCredentials: true });
     },
     onSuccess: () => {
       queryClient.setQueryData(["currentUser"], null);
     },
   });
+
   // <------- logout function ------->
   const logout = async () => {
     await logoutMutate();
@@ -68,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // <------- get current user from React Query cache ------->
   const user = queryClient.getQueryData<User>(["currentUser"]) ?? null;
+
   const isAuthenticated = !!user;
   const isLoading = isLoginLoading || isLogoutLoading;
 
@@ -85,7 +91,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
 // <------- useAuth hook ------->
 export const useAuth = (): AuthContextType => {
   const ctx = useContext(AuthContext);
