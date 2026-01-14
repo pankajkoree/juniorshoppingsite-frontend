@@ -20,6 +20,9 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      console.log(
+        `Email : ${loginCredentials.email} Password: ${loginCredentials.password}`
+      );
       await login(loginCredentials.email, loginCredentials.password);
     } catch (error) {
       toast.error("invalid credentials");

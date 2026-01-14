@@ -1,5 +1,5 @@
 import { api } from "@/lib/api/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
 
 // <------- interface for user ------->
@@ -15,7 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  refetchUser: () => void;
+  logout: () => Promise<void>;
 }
 
 // <------- auth context ------->
@@ -25,59 +25,60 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
-  // <------- refetch user ------->
-  const refetchUser = () =>
-    queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-
-  // <------- current user ------->
-  const { data: user, isLoading } = useQuery<User | null>({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      try {
-        const res = await api.get("/", {
-          withCredentials: true,
-        });
-        if (res.data) {
-          return res.data;
-        }
-        return null;
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
-
   // <------- login mutation ------->
-  const loginMutation = useMutation({
+  const { mutateAsync: loginMutate, isLoading: isLoginLoading } = useMutation<
+    { user: User },
+    Error,
+    { email: string; password: string }
+  >({
     mutationKey: ["login"],
-    mutationFn: async (data: { email: string; password: string }) => {
-      try {
-        const res = await api.post("/login", data, { withCredentials: true });
-        return res.data;
-      } catch (error: any) {
-        throw new Error(error.response?.data?.message || "login failed");
-      }
+    mutationFn: async (data) => {
+      const res = await api.post("/api/user/login", data, {
+        withCredentials: true,
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["currentUser"], data.user);
+    },
+  });
+  // <------- login function ------->
+  const login = async (email: string, password: string) => {
+    await loginMutate({ email, password });
+  };
+
+  // <------- logout mutation ------->
+  const { mutateAsync: logoutMutate, isLoading: isLogoutLoading } = useMutation<
+    void,
+    Error,
+    void
+  >({
+    mutationKey: ["logout"],
+    mutationFn: async () => {
+      await api.post("/api/user/logout", { withCredentials: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.setQueryData(["currentUser"], null);
     },
   });
-
-  // <------- login ------->
-  const login = async (email: string, password: string) => {
-    await loginMutation.mutateAsync({ email, password });
+  // <------- logout function ------->
+  const logout = async () => {
+    await logoutMutate();
   };
+
+  // <------- get current user from React Query cache ------->
+  const user = queryClient.getQueryData<User>(["currentUser"]) ?? null;
+  const isAuthenticated = !!user;
+  const isLoading = isLoginLoading || isLogoutLoading;
 
   return (
     <AuthContext.Provider
       value={{
-        user: user ?? null,
-        isAuthenticated: !!user,
+        user,
+        isAuthenticated,
         isLoading,
         login,
-        refetchUser,
+        logout,
       }}
     >
       {children}
