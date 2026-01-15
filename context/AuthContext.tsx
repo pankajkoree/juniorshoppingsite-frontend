@@ -41,13 +41,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return res.data;
     },
     onSuccess: (data) => {
-      // ✅ store user in cache
       queryClient.setQueryData(["currentUser"], data.user);
     },
   });
 
   // <------- login function ------->
-
   const login = async (email: string, password: string) => {
     await loginMutate({ email, password });
   };
@@ -73,7 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // <------- get current user from React Query cache ------->
   const user = queryClient.getQueryData<User>(["currentUser"]) ?? null;
-
   const isAuthenticated = !!user;
   const isLoading = isLoginLoading || isLogoutLoading;
 

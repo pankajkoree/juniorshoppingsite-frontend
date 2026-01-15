@@ -1,28 +1,26 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
 const Login = () => {
   const router = useRouter();
-  const { login, isAuthenticated, user, isLoading } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const [loginCredentials, setLoginCredentials] = useState({
     email: "",
     password: "",
   });
 
+  console.log(isAuthenticated, user);
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log(
-        `Email : ${loginCredentials.email} Password: ${loginCredentials.password}`
-      );
       await login(loginCredentials.email, loginCredentials.password);
     } catch (error) {
       toast.error("invalid credentials");
@@ -30,6 +28,7 @@ const Login = () => {
   };
 
   useEffect(() => {
+    console.log(isAuthenticated, user);
     if (isAuthenticated && user) {
       toast.success("login successful");
       router.push("/");
