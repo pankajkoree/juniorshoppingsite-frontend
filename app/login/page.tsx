@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
+
 const Login = () => {
   const router = useRouter();
   const { login, isAuthenticated, user } = useAuth();
@@ -15,8 +16,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-
-  console.log(isAuthenticated, user);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +27,6 @@ const Login = () => {
   };
 
   useEffect(() => {
-    console.log(isAuthenticated, user);
     if (isAuthenticated && user) {
       toast.success("login successful");
       router.push("/");
