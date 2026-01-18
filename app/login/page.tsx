@@ -11,7 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const router = useRouter();
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user, isLoading } = useAuth();
   const [loginCredentials, setLoginCredentials] = useState({
     email: "",
     password: "",
@@ -29,9 +29,12 @@ const Login = () => {
   useEffect(() => {
     if (isAuthenticated && user) {
       toast.success("login successful");
-      router.push("/");
+      loginCredentials.email = "";
+      loginCredentials.password = "";
+      router.push(`/profile/${user.username}+${user.id}`);
     }
   }, [isAuthenticated, user]);
+
   return (
     <div className="relative flex justify-center items-center min-h-screen">
       <div className="relative flex flex-col justify-center items-center xl:w-[22%] border shadow-sm shadow-gray-300 hover:shadow-blue-300 rounded-sm p-4">
@@ -79,15 +82,18 @@ const Login = () => {
             />
           </div>
           {/* <------- login button and signup indicator -------> */}
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center gap-2">
             {/* <------- login button -------> */}
             <Button variant="login" size="lg">
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
 
             {/* <------- what if user haven't created account -------> */}
-            <section>
-              Don't have an account ? <Link href="/signup">Signup</Link>
+            <section className="text-sm text-gray-600">
+              Don't have an account ?{" "}
+              <Link href="/signup" className="underline text-blue-400">
+                Signup
+              </Link>
             </section>
           </div>
         </form>
