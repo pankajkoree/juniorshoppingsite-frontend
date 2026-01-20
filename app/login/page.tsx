@@ -61,6 +61,7 @@ const Login = () => {
                   email: e.target.value,
                 })
               }
+              className="w-90"
             />
           </div>
 
