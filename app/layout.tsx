@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import ClientWrapper from "@/context/ClientWrapper";
 import { ReactNode } from "react";
 import "./globals.css";
+import { NavigationBar } from "@/components/NavigationBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,7 +19,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={`${inter.className} dark:bg-[#03121b] bg-[#f4f4f8]`}>
-        <ClientWrapper>{children}</ClientWrapper>
+        <ClientWrapper>
+          {/* <------- Navigation Bar -------> */}
+          <NavigationBar />
+
+          {children}
+        </ClientWrapper>
       </body>
     </html>
   );
