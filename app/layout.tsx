@@ -21,7 +21,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${inter.className} dark:bg-[#03121b] bg-[#f4f4f8]`}>
         <ClientWrapper>
           {/* <------- Navigation Bar -------> */}
-          <NavigationBar />
+          <div className="sticky top-0 z-50">
+            <NavigationBar />
+          </div>
 
           {children}
         </ClientWrapper>
