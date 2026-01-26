@@ -3,6 +3,7 @@
 import { Eagle_Lake } from "next/font/google";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const eagle_Lake = Eagle_Lake({
   subsets: ["latin"],
@@ -34,14 +35,14 @@ export const NavigationBar = () => {
     <div className="w-full flex items-center justify-center border-b">
       <div className="grid grid-cols-[10%_60%_30%] w-[80%] items-center py-2 gap-12">
         {/* <------- JSS logo -------> */}
-        <div className="flex flex-col items-center justify-center">
+        <Link href="/" className="flex flex-col items-center justify-center">
           <p className={`${eagle_Lake.className} font-extrabold text-xl`}>
             JUNIOR
           </p>
           <p className="text-sm -py-8">
             <span>Shopping</span> <span>Site✨</span>
           </p>
-        </div>
+        </Link>
 
         {/* <------- search bar --------> */}
         <div className="flex inset-shadow-sm inset-shadow-gray-500 dark:inset-shadow-black rounded-sm">

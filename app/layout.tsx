@@ -4,6 +4,7 @@ import ClientWrapper from "@/context/ClientWrapper";
 import { ReactNode } from "react";
 import "./globals.css";
 import { NavigationBar } from "@/components/NavigationBar";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,11 +22,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${inter.className} dark:bg-[#03121b] bg-[#f4f4f8]`}>
         <ClientWrapper>
           {/* <------- Navigation Bar -------> */}
-          <div className="sticky top-0 z-50">
+          <div className="sticky top-0 z-50 backdrop-blur-xl">
             <NavigationBar />
           </div>
 
           {children}
+
+          {/* <------- Footer -------> */}
+          <div>
+            <Footer />
+          </div>
         </ClientWrapper>
       </body>
     </html>

@@ -22,7 +22,7 @@ const Login = () => {
   const handleRegistration = () => {};
 
   return (
-    <div className="relative flex justify-center items-center min-h-screen">
+    <div className="relative flex justify-center items-center py-32">
       <div className="relative flex flex-col justify-center items-center xl:w-[22%] border shadow-sm shadow-gray-300 hover:shadow-blue-300 rounded-sm p-4">
         {/* <------- heading and sub headings -------> */}
         <div className="flex flex-col justify-center items-center gap-2 py-8">

@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         login:
-          "text-xl border border-green-300 bg-blue-300 rounded-sm hover:cursor-pointer",
+          "text-xl border border-blue-600 bg-blue-300 dark:bg-blue-400 rounded-sm hover:cursor-pointer",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -34,7 +34,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 function Button({
