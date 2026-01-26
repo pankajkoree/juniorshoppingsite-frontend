@@ -17,6 +17,7 @@ const Login = () => {
     password: "",
   });
 
+  // <------- login function ------->
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
