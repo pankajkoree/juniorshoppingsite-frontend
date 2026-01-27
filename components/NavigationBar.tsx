@@ -74,7 +74,7 @@ export const NavigationBar = () => {
         {/* <------- login and carts */}
         <div className="flex gap-8">
           {/* <------- login -------> */}
-          <div className="flex items-center gap-2">
+          <Link href="/login" className="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="32"
@@ -93,10 +93,10 @@ export const NavigationBar = () => {
               <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
             </svg>
             <p>login</p>
-          </div>
+          </Link>
 
           {/* <------- cart --------> */}
-          <div className="flex items-center gap-2">
+          <Link href="/carts" className="flex items-center gap-2">
             {/* cart icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -116,10 +116,10 @@ export const NavigationBar = () => {
               <path d="M6 8h15l-3.5 7l-7.1 -.747a4 4 0 0 1 -3.296 -2.493l-2.853 -7.13a1 1 0 0 0 -.928 -.63h-1.323" />
             </svg>
             <p>cart</p>
-          </div>
+          </Link>
 
           {/* theme switch */}
-          <div onClick={themeSwitch}>
+          <div onClick={themeSwitch} className="hover:cursor-pointer">
             {isDarkMode ? (
               <div className="flex inset-shadow-sm inset-shadow-black rounded-sm p-2">
                 {/* sun icon for light theme */}
