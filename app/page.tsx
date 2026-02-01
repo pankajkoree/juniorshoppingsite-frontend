@@ -1,5 +1,6 @@
 "use client";
 
+import { Card } from "@/components/Card";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -26,7 +27,7 @@ export default function Home() {
       ) : (
         <div>
           {data.data?.map((product: any) => (
-            <div key={product.id}>{product.title}</div>
+            <Card />
           ))}
         </div>
       )}
