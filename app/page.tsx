@@ -25,9 +25,17 @@ export default function Home() {
           <h1>Loading...</h1>
         </div>
       ) : (
-        <div>
+        <div className="ml-4 mr-4 grid grid-cols-3 gap-4 p-2">
           {data.data?.map((product: any) => (
-            <Card />
+            <Card
+              key={product.id}
+              id={product.id}
+              images={product.thumbnail}
+              title={product.title}
+              price={product.price}
+              rating={product.rating}
+              category={product.category}
+            />
           ))}
         </div>
       )}
