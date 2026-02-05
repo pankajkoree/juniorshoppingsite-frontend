@@ -21,7 +21,7 @@ export const Card = ({
   category,
 }: cardProps) => {
   return (
-    <div className="border w-80 h-100 flex flex-col items-center justify-center">
+    <div className="border w-100 h-100 flex flex-col items-center justify-center rounded-sm shadow-sm shadow-green-300">
       {/* <------- image of product -------> */}
       <div className="relative w-40 h-40 bg-amber-100">
         <Image
