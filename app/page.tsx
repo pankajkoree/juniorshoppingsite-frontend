@@ -4,6 +4,10 @@ import { Card } from "@/components/Card";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+interface product{
+  
+}
+
 export default function Home() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products-data"],
