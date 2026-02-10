@@ -29,19 +29,24 @@ export const Card = ({ images, title, price, rating, category }: cardProps) => {
   };
 
   return (
-    <div className="border w-100 h-100 flex flex-col items-center justify-center rounded-sm shadow-sm transition">
-      <div ref={containerRef} className="relative w-40 h-40">
+    <div
+      ref={containerRef}
+      className="border w-100 h-120 flex flex-col items-center justify-center rounded-sm shadow-sm transition"
+    >
+      <div className="relative w-[90%] h-[60%]">
         <Image
           src={images}
           alt={title}
           fill
           crossOrigin="anonymous"
           onLoad={(e) => handleImageLoad(e.target as HTMLImageElement)}
-          className="object-cover"
+          className="object-fit bg-amber-600"
         />
       </div>
 
-      <h1>{title}</h1>
+      <h1 className="text-2xl">{title}</h1>
+      <p>${price}</p>
+      <p>{rating}</p>
     </div>
   );
 };
