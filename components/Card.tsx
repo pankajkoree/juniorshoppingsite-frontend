@@ -31,9 +31,9 @@ export const Card = ({ images, title, price, rating, category }: cardProps) => {
   return (
     <div
       ref={containerRef}
-      className="border w-100 h-120 flex flex-col items-center justify-center rounded-sm shadow-sm transition"
+      className="border w-100 h-120 flex flex-col rounded-sm shadow-sm transition p-4"
     >
-      <div className="relative w-[90%] h-[60%]">
+      <div className="relative w-[90%] h-[60%] self-center">
         <Image
           src={images}
           alt={title}
