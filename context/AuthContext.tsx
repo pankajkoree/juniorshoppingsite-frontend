@@ -18,12 +18,19 @@ interface LoginResponse {
   data: User;
 }
 
+// <------- register response from backend ------->
+interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
 // <------- auth context type ------->
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -72,9 +79,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
+  // <------- register mutation ------->
+  const { mutateAsync: registerMutate, isPending: isRegisterLoading } = useMutation<
+    RegisterResponse,
+    Error,
+    { username: string; email: string; password: string }
+  >({
+    mutationKey: ["register"],
+    mutationFn: async (credentials) => {
+      const res = await api.post("/api/user/register", credentials, {
+        withCredentials: true,
+      });
+      return res.data;
+    },
+  });
+
   // <------- login ------->
   const login = async (email: string, password: string) => {
     await loginMutate({ email, password });
+  };
+
+  // <------- register ------->
+  const register = async (username: string, email: string, password: string) => {
+    await registerMutate({ username, email, password });
   };
 
   // <------- logout mutation ------->
@@ -97,7 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const isAuthenticated = !!user;
-  const isLoading = isUserLoading || isLoginLoading || isLogoutLoading;
+  const isLoading = isUserLoading || isLoginLoading || isLogoutLoading || isRegisterLoading;
 
   return (
     <AuthContext.Provider
@@ -106,6 +133,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAuthenticated,
         isLoading,
         login,
+        register,
         logout,
       }}
     >

@@ -3,14 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/AuthContext";
 
-const Login = () => {
+const Signup = () => {
   const router = useRouter();
+  const { register, isLoading } = useAuth();
   const [users, setUsers] = useState({
     username: "",
     email: "",
@@ -21,14 +22,11 @@ const Login = () => {
   const handleRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const registerResponse = await axios.post(
-        "https://juniorshoppingsite-backend.onrender.com/api/user/register",
-        users,
-      );
-      toast.success("account created");
+      await register(users.username, users.email, users.password);
+      toast.success("Account created successfully");
       router.push("/login");
     } catch (error) {
-      toast.error("unable to register");
+      toast.error("Unable to register. Please try again.");
     }
   };
 
@@ -109,9 +107,10 @@ const Login = () => {
             <Button 
               variant="login" 
               size="lg"
-              className="w-full text-white font-semibold bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 dark:from-emerald-600 dark:to-emerald-700 dark:hover:from-emerald-700 dark:hover:to-emerald-800 shadow-md hover:shadow-lg border-0"
+              disabled={isLoading}
+              className="w-full text-white font-semibold bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 dark:from-emerald-600 dark:to-emerald-700 dark:hover:from-emerald-700 dark:hover:to-emerald-800 shadow-md hover:shadow-lg border-0 disabled:opacity-50"
             >
-              Create Account
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
 
             {/* <------- what if user already have account -------> */}
@@ -128,4 +127,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
