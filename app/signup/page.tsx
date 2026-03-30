@@ -3,11 +3,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
+
+const messageToString = (value: unknown): string | undefined => {
+  if (typeof value === "string" && value.trim() !== "") return value;
+  if (typeof value === "number") return value.toString();
+  return undefined;
+};
 
 const Signup = () => {
   const router = useRouter();
@@ -21,12 +28,23 @@ const Signup = () => {
   // <-------- registration ------->
   const handleRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!users.username.trim() || !users.email.trim() || !users.password.trim()) {
+      toast.error("Please fill in username, email, and password.");
+      return;
+    }
+
     try {
       await register(users.username, users.email, users.password);
       toast.success("Account created successfully");
       router.push("/login");
-    } catch (error) {
-      toast.error("Unable to register. Please try again.");
+    } catch (error: unknown) {
+      let msg: string | undefined;
+      if (axios.isAxiosError(error)) {
+        msg = (error.response?.data as { message?: string })?.message || error.message;
+      }
+      toast.error(messageToString(msg) || "Unable to register. Please try again.");
+      console.error("Register error:", error);
     }
   };
 

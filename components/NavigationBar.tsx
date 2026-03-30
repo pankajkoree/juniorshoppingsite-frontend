@@ -7,13 +7,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export const NavigationBar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme) return storedTheme === "dark";
-    return false;
-  });
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -21,7 +15,16 @@ export const NavigationBar = () => {
   const { user, isAuthenticated, logout, isLoading } = useAuth();
 
   useEffect(() => {
-    setIsHydrated(true);
+    if (typeof window === "undefined") return;
+
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
+    } else if (storedTheme === "light") {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   useEffect(() => {
@@ -132,7 +135,7 @@ export const NavigationBar = () => {
         <div className="flex gap-6 items-center justify-end">
           {!isAuthenticated ? (
             <>
-              {/* <------- login -------> */}
+              {/* <------- login only for not logged in state -------> */}
               <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors font-medium">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,28 +155,6 @@ export const NavigationBar = () => {
                   <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
                 </svg>
                 <span className="text-sm">Sign In</span>
-              </Link>
-
-              {/* <------- signup -------> */}
-              <Link href="/signup" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M9 12l2 2l4 -4" />
-                  <path d="M21 12c.552 0 1 .448 1 1v6c0 .552 -.448 1 -1 1h-16c-.552 0 -1 -.448 -1 -1v-6c0 -.552 .448 -1 1 -1z" />
-                  <path d="M5 12v-7a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v7" />
-                </svg>
-                <span className="text-sm">Sign Up</span>
               </Link>
             </>
           ) : (
@@ -279,12 +260,11 @@ export const NavigationBar = () => {
           </Link>
 
           {/* theme switch */}
-          {isHydrated && (
-            <button
-              onClick={themeSwitch}
-              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors hover:cursor-pointer"
-              aria-label="Toggle theme"
-            >
+          <button
+            onClick={themeSwitch}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors hover:cursor-pointer"
+            aria-label="Toggle theme"
+          >
               {isDarkMode ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +299,7 @@ export const NavigationBar = () => {
                 </svg>
               )}
             </button>
-          )}
+        
         </div>
       </div>
     </div>

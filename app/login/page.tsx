@@ -3,11 +3,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
+import { FaGoogle, FaFacebookF } from "react-icons/fa";
+
+const messageToString = (value: unknown): string | undefined => {
+  if (typeof value === "string" && value.trim() !== "") return value;
+  if (typeof value === "number") return value.toString();
+  return undefined;
+};
 
 const Login = () => {
   const router = useRouter();
@@ -20,11 +28,22 @@ const Login = () => {
   // <------- login function ------->
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!loginCredentials.email.trim() || !loginCredentials.password.trim()) {
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
     try {
       await login(loginCredentials.email, loginCredentials.password);
       clearCredentials();
-    } catch (error) {
-      toast.error("invalid credentials");
+    } catch (error: unknown) {
+      let msg: string | undefined;
+      if (axios.isAxiosError(error)) {
+        msg = (error.response?.data as { message?: string })?.message || error.message;
+      }
+      toast.error(messageToString(msg) || "Invalid credentials");
+      console.error("Login error:", error);
     }
   };
   useEffect(() => {
@@ -101,13 +120,30 @@ const Login = () => {
               {isLoading ? "Logging in..." : "Sign In"}
             </Button>
 
-            {/* <------- what if user haven't created account -------> */}
-            <section className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-                Create one
-              </Link>
-            </section>
+            <div className="w-full border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 text-center mb-3">Or continue with</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => toast('Google login coming soon', { icon: '🔎' })}
+                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
+                >
+                  <FaGoogle className="w-4 h-4 text-red-500" />
+                  Continue with Google
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toast('Facebook login coming soon', { icon: '🔎' })}
+                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
+                >
+                  <FaFacebookF className="w-4 h-4 text-blue-600" />
+                  Continue with Facebook
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
+                New to JSS? <Link href="/signup" className="text-blue-600 dark:text-blue-300 font-semibold hover:text-blue-700 dark:hover:text-blue-200">Create an account</Link> to get personalized deals and fast checkout.
+              </p>
+            </div>
           </div>
         </form>
       </div>
