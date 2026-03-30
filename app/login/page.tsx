@@ -22,19 +22,21 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(loginCredentials.email, loginCredentials.password);
+      clearCredentials();
     } catch (error) {
       toast.error("invalid credentials");
     }
   };
-
   useEffect(() => {
     if (isAuthenticated && user) {
       toast.success("login successful");
-      loginCredentials.email = "";
-      loginCredentials.password = "";
       router.push(`/profile/${user.username}+${user.id}`);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, router]);
+
+  const clearCredentials = () => {
+    setLoginCredentials({ email: "", password: "" });
+  };
 
   return (
     <div className="relative min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-[#030f16] py-20">
@@ -101,7 +103,7 @@ const Login = () => {
 
             {/* <------- what if user haven't created account -------> */}
             <section className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{' '}
               <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
                 Create one
               </Link>

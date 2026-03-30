@@ -3,6 +3,7 @@
 import { Eagle_Lake } from "next/font/google";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const eagle_Lake = Eagle_Lake({
@@ -11,22 +12,21 @@ const eagle_Lake = Eagle_Lake({
 });
 
 export const NavigationBar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") return false;
     const storedTheme = localStorage.getItem("theme");
-    const dark = storedTheme === "dark";
-    document.documentElement.classList.toggle("dark", dark);
-    setIsDarkMode(dark);
-  }, []);
+    if (storedTheme) return storedTheme === "dark";
+    return false;
+  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (typeof window === "undefined") return;
     document.documentElement.classList.toggle("dark", isDarkMode);
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode, isMounted]);
+  }, [isDarkMode]);
 
   const themeSwitch = () => {
     setIsDarkMode((prev) => !prev);
@@ -42,31 +42,61 @@ export const NavigationBar = () => {
         </Link>
 
         {/* <------- search bar --------> */}
-        <div className="flex items-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
+        <div className="relative flex items-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
+          <span className="absolute left-3 text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </span>
           <Input
             type="text"
             placeholder="Search products, brands..."
-            className="bg-transparent border-none outline-none flex-1 pl-4 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (searchTerm.trim()) {
+                  router.push(`/?q=${encodeURIComponent(searchTerm.trim())}`);
+                }
+              }
+            }}
+            className={`bg-transparent border-none outline-none flex-1 pl-10 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all ${
+              isSearchFocused ? "ring-2 ring-blue-500 dark:ring-blue-400" : ""
+            }`}
           />
-          <div className="flex w-12 h-10 justify-center items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-gray-600 dark:text-gray-400"
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="absolute right-11 h-8 w-8 inline-flex items-center justify-center rounded-full bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Clear search"
             >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-              <path d="M21 21l-6 -6" />
+              <span className="text-xs font-bold">×</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              if (searchTerm.trim()) {
+                router.push(`/?q=${encodeURIComponent(searchTerm.trim())}`);
+              }
+            }}
+            className="absolute right-2 h-8 w-8 inline-flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            aria-label="Submit search"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+              <path d="M21 21l-6-6" />
+              <path d="M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
             </svg>
-          </div>
+          </button>
         </div>
+
+        {/* <------- login and carts */}
+
 
         {/* <------- login and carts */}
         <div className="flex gap-6 items-center justify-end">
