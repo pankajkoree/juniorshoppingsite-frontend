@@ -30,7 +30,7 @@ const Login = () => {
   useEffect(() => {
     if (isAuthenticated && user) {
       toast.success("login successful");
-      router.push(`/profile/${user.username}+${user.id}`);
+      router.push("/");
     }
   }, [isAuthenticated, user, router]);
 
